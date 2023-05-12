@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/Indonesia_by_desa_1.js"></script>
+        <script src="data/rio_2.js"></script>
+        <script src="data/btswilaya_3.js"></script>
+        <script src="data/jlnraya_4.js"></script>
+        <script src="data/monumen_5.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[0.2279655685493902,119.54878528786527],[1.5966714215705489,122.24446815692524]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            map.setMaxBounds(map.getBounds());
+        }
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        function pop_Indonesia_by_desa_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROVINSI'] !== null ? autolinker.link(feature.properties['PROVINSI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KECAMATAN'] !== null ? autolinker.link(feature.properties['KECAMATAN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DESA'] !== null ? autolinker.link(feature.properties['DESA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SUMBER'] !== null ? autolinker.link(feature.properties['SUMBER'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KODE2010'] !== null ? autolinker.link(feature.properties['KODE2010'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROVNO'] !== null ? autolinker.link(feature.properties['PROVNO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KABKOTNO'] !== null ? autolinker.link(feature.properties['KABKOTNO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KECNO'] !== null ? autolinker.link(feature.properties['KECNO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DESANO'] !== null ? autolinker.link(feature.properties['DESANO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KABKOT'] !== null ? autolinker.link(feature.properties['KABKOT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Indonesia_by_desa_1_0(feature) {
+            switch(String(feature.properties['KECAMATAN'])) {
+                case 'BAOLAN':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(201,33,239,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'BASIDONDO':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(239,102,187,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'DAKO PAMEAN':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(108,134,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'DAMPAL SELATAN':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(142,232,69,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'DAMPAL UTARA':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(52,192,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'DONDO':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(18,214,37,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'GALANG':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,222,155,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'LAMPASIO':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(224,170,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'OGODEIDE':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(78,14,239,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'TOLITOLI UTARA':
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(217,31,47,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_Indonesia_by_desa_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(205,207,97,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Indonesia_by_desa_1');
+        map.getPane('pane_Indonesia_by_desa_1').style.zIndex = 401;
+        map.getPane('pane_Indonesia_by_desa_1').style['mix-blend-mode'] = 'normal';
+        var layer_Indonesia_by_desa_1 = new L.geoJson(json_Indonesia_by_desa_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Indonesia_by_desa_1',
+            layerName: 'layer_Indonesia_by_desa_1',
+            pane: 'pane_Indonesia_by_desa_1',
+            onEachFeature: pop_Indonesia_by_desa_1,
+            style: style_Indonesia_by_desa_1_0,
+        });
+        bounds_group.addLayer(layer_Indonesia_by_desa_1);
+        map.addLayer(layer_Indonesia_by_desa_1);
+        function pop_rio_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_rio_2_0() {
+            return {
+                pane: 'pane_rio_2',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '10,5,1,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_rio_2');
+        map.getPane('pane_rio_2').style.zIndex = 402;
+        map.getPane('pane_rio_2').style['mix-blend-mode'] = 'normal';
+        var layer_rio_2 = new L.geoJson(json_rio_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_rio_2',
+            layerName: 'layer_rio_2',
+            pane: 'pane_rio_2',
+            onEachFeature: pop_rio_2,
+            style: style_rio_2_0,
+        });
+        bounds_group.addLayer(layer_rio_2);
+        map.addLayer(layer_rio_2);
+        function pop_btswilaya_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties[' btswilya'] !== null ? autolinker.link(feature.properties[' btswilya'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_btswilaya_3_0() {
+            return {
+                pane: 'pane_btswilaya_3',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '10,5,1,5,1,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_btswilaya_3');
+        map.getPane('pane_btswilaya_3').style.zIndex = 403;
+        map.getPane('pane_btswilaya_3').style['mix-blend-mode'] = 'normal';
+        var layer_btswilaya_3 = new L.geoJson(json_btswilaya_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_btswilaya_3',
+            layerName: 'layer_btswilaya_3',
+            pane: 'pane_btswilaya_3',
+            onEachFeature: pop_btswilaya_3,
+            style: style_btswilaya_3_0,
+        });
+        bounds_group.addLayer(layer_btswilaya_3);
+        map.addLayer(layer_btswilaya_3);
+        function pop_jlnraya_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['jl.raya'] !== null ? autolinker.link(feature.properties['jl.raya'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_jlnraya_4_0() {
+            return {
+                pane: 'pane_jlnraya_4',
+                opacity: 1,
+                color: 'rgba(255,181,9,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_jlnraya_4');
+        map.getPane('pane_jlnraya_4').style.zIndex = 404;
+        map.getPane('pane_jlnraya_4').style['mix-blend-mode'] = 'normal';
+        var layer_jlnraya_4 = new L.geoJson(json_jlnraya_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_jlnraya_4',
+            layerName: 'layer_jlnraya_4',
+            pane: 'pane_jlnraya_4',
+            onEachFeature: pop_jlnraya_4,
+            style: style_jlnraya_4_0,
+        });
+        bounds_group.addLayer(layer_jlnraya_4);
+        map.addLayer(layer_jlnraya_4);
+        function pop_monumen_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['monumen'] !== null ? autolinker.link(feature.properties['monumen'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_monumen_5_0() {
+            return {
+                pane: 'pane_monumen_5',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,139,143,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_monumen_5');
+        map.getPane('pane_monumen_5').style.zIndex = 405;
+        map.getPane('pane_monumen_5').style['mix-blend-mode'] = 'normal';
+        var layer_monumen_5 = new L.geoJson(json_monumen_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_monumen_5',
+            layerName: 'layer_monumen_5',
+            pane: 'pane_monumen_5',
+            onEachFeature: pop_monumen_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_monumen_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_monumen_5);
+        map.addLayer(layer_monumen_5);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/monumen_5.png" /> monumen': layer_monumen_5,'<img src="legend/jlnraya_4.png" /> jln raya': layer_jlnraya_4,'<img src="legend/btswilaya_3.png" /> btswilaya': layer_btswilaya_3,'<img src="legend/rio_2.png" /> rio': layer_rio_2,'Indonesia_by_desa<br /><table><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_BAOLAN0.png" /></td><td>BAOLAN</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_BASIDONDO1.png" /></td><td>BASIDONDO</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_DAKOPAMEAN2.png" /></td><td>DAKO PAMEAN</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_DAMPALSELATAN3.png" /></td><td>DAMPAL SELATAN</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_DAMPALUTARA4.png" /></td><td>DAMPAL UTARA</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_DONDO5.png" /></td><td>DONDO</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_GALANG6.png" /></td><td>GALANG</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_LAMPASIO7.png" /></td><td>LAMPASIO</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_OGODEIDE8.png" /></td><td>OGODEIDE</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_TOLITOLIUTARA9.png" /></td><td>TOLITOLI UTARA</td></tr><tr><td style="text-align: center;"><img src="legend/Indonesia_by_desa_1_10.png" /></td><td></td></tr></table>': layer_Indonesia_by_desa_1,"OpenStreetMap": layer_OpenStreetMap_0,}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_btswilaya_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties[' btswilya'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties[' btswilya']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_btswilaya_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_Indonesia_by_desa_1,layer_btswilaya_3]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Indonesia_by_desa_1,layer_btswilaya_3]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Indonesia_by_desa_1,layer_btswilaya_3]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Indonesia_by_desa_1,layer_btswilaya_3]);
+        });
+        </script>
+    </body>
+</html>
